@@ -1,0 +1,4 @@
+def format(target):
+  if "IncompatiblePlatformProvider" not in providers(target):
+    return target.label
+  return ""

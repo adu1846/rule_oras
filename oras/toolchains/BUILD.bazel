@@ -1,0 +1,3 @@
+load("//oras/private:toolchain.bzl", "declare_toolchains")
+
+declare_toolchains()
