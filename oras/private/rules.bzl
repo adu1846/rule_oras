@@ -1,5 +1,5 @@
 def _oras_push_impl(ctx):
-    toolchain = ctx.toolchains["//oras:toolchain"]
+    toolchain = ctx.toolchains["@rules_oras//oras:toolchain"]
     binary = toolchain.oras_binary
     binary_file = binary.files.to_list()[0]
 
@@ -16,23 +16,28 @@ def _oras_push_impl(ctx):
     if ctx.attr.manifest_annotations:
         cmd_opts += ["--manifest-annotations", ctx.attr.manifest_annotations]
     cmd_opts += [f.path for f in ctx.files.srcs]
+    cmd_opts += ["--disable-path-validation","--insecure"]
     cmd_opts += [">", output.path]
 
+    print(">>>>"+str(" ".join(cmd_opts),))
     ctx.actions.run_shell(
         command = " ".join(cmd_opts),
         inputs = depset(ctx.files.srcs),
+        progress_message = "Upload oci artifact of %s" % ctx.attr.target,
         tools = [binary_file],
         outputs = [output],
         use_default_shell_env = True,
     )
 
-    file_depsets = [src.files for src in ctx.attr.srcs]
-    files = depset(transitive = file_depsets)
-    return [
-        DefaultInfo(
-            files = files,
-        ),
-    ]
+    # file_depsets = [src.files for src in ctx.attr.srcs]
+    # files = depset(transitive = file_depsets)
+    # return [
+    #     DefaultInfo(
+    #         files = files,
+    #     ),
+    # ]
+
+    return [DefaultInfo(files = depset([output]))]
 
 oras_push = rule(
     implementation = _oras_push_impl,
@@ -65,5 +70,5 @@ oras_push = rule(
             mandatory = False,
         ),
     },
-    toolchains = ["//oras:toolchain"],
+    toolchains = ["@rules_oras//oras:toolchain"],
 )

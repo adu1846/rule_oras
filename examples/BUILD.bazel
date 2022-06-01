@@ -1,15 +1,8 @@
 load("//oras:def.bzl", "oras_push")
 
-platform(
-    name = "my_target_platform",
-    constraint_values = [
-        "@platforms//os:linux",
-        "@platforms//cpu:x86_64",
-    ],
-)
-
 oras_push(
     name = "hello-artifact",
     srcs = ["artifact.txt"],
-    target = "localhost:5000/hello-artifact:v2",
+    target = "localhost:5001/hello-artifact:v2",
 )
+

@@ -1,4 +1,3 @@
-load("@bazel_skylib//lib:paths.bzl", "paths")
 load(":platforms.bzl", "OS_ARCH", "BAZEL_ARCH_CONSTRAINTS", "BAZEL_OS_CONSTRAINTS")
 
 def _oras_toolchain_impl(ctx):
@@ -22,7 +21,7 @@ oras_toolchain = rule(
 
 def oras_register_toolchains():
     for os, arch in OS_ARCH:
-        native.register_toolchains("//oras/toolchains:oras_{}_{}_toolchain".format(os, arch))
+        native.register_toolchains("@rules_oras//oras/toolchains:oras_{}_{}_toolchain".format(os, arch))
 
 
 def declare_toolchains():
@@ -42,5 +41,5 @@ def declare_toolchains():
             exec_compatible_with = constraints,
             target_compatible_with = constraints,
             toolchain = ":oras_{}_{}".format(os, arch),
-            toolchain_type = "//oras:toolchain",
+            toolchain_type = "@rules_oras//oras:toolchain",
         )
