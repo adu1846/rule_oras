@@ -1,5 +1,5 @@
 load(
     "//oras/private:rules.bzl",
-    _oras_push = "oras_push",
+    _oci_artifact = "oci_artifact",
 )
-oras_push = _oras_push
+oci_artifact = _oci_artifact

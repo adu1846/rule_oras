@@ -1,8 +1,15 @@
-load("//oras:def.bzl", "oras_push")
+load("//oras:def.bzl", "oci_artifact")
 
-oras_push(
+oci_artifact(
+    name = "artifact_deps",
+    srcs = glob(["*.impl"]),
+    target = "localhost:5001/artifact_deps:v2",
+)
+
+oci_artifact(
     name = "hello-artifact",
-    srcs = ["artifact.txt"],
+    srcs = glob(["*.txt"]),
+    dependencies = [":artifact_deps"],
     target = "localhost:5001/hello-artifact:v2",
 )
 
