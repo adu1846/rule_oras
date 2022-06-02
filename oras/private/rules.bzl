@@ -5,12 +5,15 @@ def _oci_artifact_impl(ctx):
 
     output = ctx.actions.declare_file(ctx.attr.name)
     if ctx.files.srcs:
+        if not (ctx.attr.registry and ctx.attr.repository and ctx.attr.tag):
+            fail("Param registry repository or tag is null, expect a value with type string!")
+        target = "%s/%s:%s" % (ctx.attr.registry, ctx.attr.repository, ctx.attr.tag)
         cmd_opts = [binary_file.path]
         if ctx.attr.username:
             cmd_opts += ["-u", ctx.attr.username]
         if ctx.attr.password:
             cmd_opts += ["-p", ctx.attr.password]
-        cmd_opts += ["push", ctx.attr.target]
+        cmd_opts += ["push", target]
         if ctx.attr.manifest_config:
             cmd_opts += ["--manifest-config", ctx.attr.manifest_config]
         if ctx.attr.manifest_annotations:
@@ -25,7 +28,7 @@ def _oci_artifact_impl(ctx):
     ctx.actions.run_shell(
         command = " ".join(cmd_opts),
         inputs = depset(ctx.files.srcs),
-        progress_message = "Upload oci artifact of %s" % ctx.attr.target,
+        progress_message = "Upload oci artifact of %s" % ctx.attr.name,
         tools = [binary_file],
         outputs = [output],
         use_default_shell_env = True,
@@ -48,8 +51,16 @@ oci_artifact = rule(
             doc = "list of dependency files to push",
             mandatory = False,
         ),
-        "target": attr.string(
-            doc = "target location to push to",
+        "registry": attr.string(
+            doc = "target location of registry to push to",
+            mandatory = False,
+        ),
+        "repository": attr.string(
+            doc = "target location of repository to push to",
+            mandatory = False,
+        ),
+        "tag": attr.string(
+            doc = "target location of tag to push to",
             mandatory = False,
         ),
         "manifest_config": attr.string(

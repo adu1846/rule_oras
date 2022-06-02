@@ -3,13 +3,17 @@ load("//oras:def.bzl", "oci_artifact")
 oci_artifact(
     name = "artifact_deps",
     srcs = glob(["*.impl"]),
-    target = "localhost:5001/artifact_deps:v2",
+    registry = "localhost:5001",
+    repository = "artifact-deps",
+    tag = "v2",
 )
 
 oci_artifact(
     name = "hello-artifact",
     srcs = glob(["*.txt"]),
     dependencies = [":artifact_deps"],
-    target = "localhost:5001/hello-artifact:v2",
+    registry = "localhost:5001",
+    repository = "hello-artifact",
+    tag = "v2",
 )
 
